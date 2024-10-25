@@ -1,16 +1,7 @@
 
-using backend.Context;
+using backend.Controllers;
+using backend.Extensions;
 using backend.Models.Domain;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 
 namespace backend
 {
@@ -20,145 +11,32 @@ namespace backend
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
 
-            builder.Services.AddIdentityApiEndpoints<AppUser>()
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            // Register services using custom extension methods
+            builder.Services.AddSwaggerExplorer()
+                            .InjectDBContext(builder.Configuration)
+                            .AddAppConfig(builder.Configuration)
+                            .AddIdentityHandlersAndStores()
+                            .ConfigureIdentityOptions()
+                            .AddIdentityAuth(builder.Configuration);
 
-            // For testing only Testing --  Configuring Identity options (password, email uniqueness, etc.)
-            builder.Services.Configure<IdentityOptions>(options =>
-            {
-                options.Password.RequireDigit = false;
-                options.Password.RequireUppercase = false;
-                options.Password.RequireNonAlphanumeric = false;
-                options.User.RequireUniqueEmail = true;
-            });
-
-            // Configuring Entity Framework to use SQL Server
-            builder.Services.AddDbContext<ApplicationDbContext>(
-                options => options.UseSqlServer(builder.Configuration.GetConnectionString("SQLAuthConnection"))
-            );
-
-            builder.Services.AddAuthentication(x =>
-            {
-                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(y =>
-            {
-                y.SaveToken = false;
-                y.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(builder.Configuration["AppSettings:JWTSecret"]!)
-                    ),
-                    ValidateIssuer = false,
-                    ValidateAudience = false
-                };
-            });
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
+            app.ConfigureSwaggerExplorer()
+                .AddIdentityAuthMiddleware();
 
-            app.UseHttpsRedirection();
-
-            app.UseAuthorization();
-
-
+            app.MapControllers();
 
             app.MapGroup("/api")
                 .MapIdentityApi<AppUser>();
 
-            // API route for user registration
-            app.MapPost("/api/signup", async (
-                UserManager<AppUser> userManager,
-                [FromBody] UserRegistrationModel userRegistrationModel
-                ) =>
-            {
-                AppUser user = new AppUser()
-                {
-                    UserName = userRegistrationModel.Username,
-                    Email = userRegistrationModel.Email,
-                    FullName = userRegistrationModel.FullName,
-                    Gender = userRegistrationModel.Gender,
-                    DateOfBirth = userRegistrationModel.DateOfBirth,
-                };
-                // Password confirmation check
-                if (userRegistrationModel.Password != userRegistrationModel.Password2)
-                {
-                    return Results.BadRequest(new { message = "Password do not match." });
-                }
-                var result = await userManager.CreateAsync(user, userRegistrationModel.Password);
-                if (result.Succeeded)
-                    return Results.Ok(result);
-                else
-                    return Results.BadRequest(result);
-            });
-
-            app.MapPost("/api/signin", async (
-                UserManager<AppUser> userManager,
-                [FromBody] LoginModel loginModel) =>
-            {
-                var user = await userManager.FindByEmailAsync(loginModel.Email);
-                if (user != null && await userManager.CheckPasswordAsync(user, loginModel.Password))
-                {
-                    var signInKey = new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(builder.Configuration["AppSettings:JWTSecret"]!));
-                    var tokenDescriptor = new SecurityTokenDescriptor
-                    {
-                        Subject = new ClaimsIdentity(new Claim[]
-                        {
-                            new Claim("UserID", user.Id.ToString()),
-                        }),
-                        Expires = DateTime.UtcNow.AddDays(1),
-                        SigningCredentials = new SigningCredentials(
-                            signInKey,
-                            SecurityAlgorithms.HmacSha256Signature)
-                    };
-                    var tokenHandler = new JwtSecurityTokenHandler();
-                    var securityToken = tokenHandler.CreateToken(tokenDescriptor);
-                    var token = tokenHandler.WriteToken(securityToken);
-                    return Results.Ok(new { token });
-                }
-                else
-                    return Results.BadRequest(new { message = "Username or password is incorrect." });
-            });
-
-            app.MapControllers();
+            app.MapGroup("/api").MapIdentityUserEndpoints();
 
             app.Run();
         }
 
-        // Model for User Registration
-        public class UserRegistrationModel
-        {
-            public string Email { get; set; }
-            public string Username { get; set; }
-            public string Password { get; set; }
-            public string Password2 { get; set; }
-            public string FullName { get; set; }
-            public string Gender { get; set; }
-            public DateOnly DateOfBirth { get; set; }
-        }
-
-        // Model for User Login
-        public class LoginModel
-        {
-            public string Email { get; set; }
-            public string Password { get; set; }
-        }
+       
     }
 }
