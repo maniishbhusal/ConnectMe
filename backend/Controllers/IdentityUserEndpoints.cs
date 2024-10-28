@@ -18,7 +18,6 @@ namespace backend.Controllers
         public string Email { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
-        public string Password2 { get; set; }
         public string FullName { get; set; }
         public string Gender { get; set; }
         public DateOnly DateOfBirth { get; set; }
@@ -53,10 +52,10 @@ namespace backend.Controllers
                 DateOfBirth = userRegistrationModel.DateOfBirth,
             };
             // Password confirmation check
-            if (userRegistrationModel.Password != userRegistrationModel.Password2)
-            {
-                return Results.BadRequest(new { message = "Password do not match." });
-            }
+            //if (userRegistrationModel.Password != userRegistrationModel.Password2)
+            //{
+            //    return Results.BadRequest(new { message = "Password do not match." });
+            //}
             var result = await userManager.CreateAsync(user, userRegistrationModel.Password);
             if (result.Succeeded)
                 return Results.Ok(result);

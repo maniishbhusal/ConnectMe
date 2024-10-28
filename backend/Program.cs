@@ -15,6 +15,7 @@ namespace backend
 
             // Register services using custom extension methods
             builder.Services.AddSwaggerExplorer()
+                            .AddCorsOrigin()
                             .InjectDBContext(builder.Configuration)
                             .AddAppConfig(builder.Configuration)
                             .AddIdentityHandlersAndStores()
@@ -25,7 +26,7 @@ namespace backend
             var app = builder.Build();
 
             app.ConfigureSwaggerExplorer()
-                .AddIdentityAuthMiddleware();
+                .AddIdentityAuthAndCorsMiddleware();
 
             app.MapControllers();
 

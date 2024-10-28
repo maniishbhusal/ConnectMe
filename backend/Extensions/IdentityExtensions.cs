@@ -53,9 +53,27 @@ namespace backend.Extensions
             return services;
         }
 
-        public static WebApplication AddIdentityAuthMiddleware(this WebApplication app)
+        public static IServiceCollection AddCorsOrigin(this IServiceCollection services)
+        {
+            services.AddCors(options =>
+            {
+                options.AddPolicy("MyAllowSpecificOrigins",
+                                  policy =>
+                                  {
+                                      policy.WithOrigins("http://localhost:5173")
+                                      .AllowAnyMethod() // Allows all HTTP methods
+                                      .AllowAnyHeader(); // Allows all headers;
+                                  });
+            });
+
+            return services;
+        }
+
+        public static WebApplication AddIdentityAuthAndCorsMiddleware(this WebApplication app)
         {
             app.UseHttpsRedirection();
+            app.UseCors("MyAllowSpecificOrigins");
+            app.UseAuthentication();
             app.UseAuthorization();
             return app;
         }
