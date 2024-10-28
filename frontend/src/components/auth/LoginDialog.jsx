@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -11,10 +11,9 @@ import { Label } from "@/components/ui/label";
 import { Loader2, Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { DialogDescription } from "@radix-ui/react-dialog";
 import { Root } from "@radix-ui/react-visually-hidden";
-import {
-  validateEmail,
-  validatePassword,
-} from "../utils/authHelpers";
+import { validateEmail, validatePassword } from "../utils/authHelpers";
+import { toast } from "sonner";
+import { signIn } from "../../api/auth";
 
 const LoginDialog = ({ open, onOpenChange, onSwitchToSignup }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -25,6 +24,36 @@ const LoginDialog = ({ open, onOpenChange, onSwitchToSignup }) => {
   });
   const [errors, setErrors] = useState({});
 
+  // Reset form data and errors whenever the dialog opens
+  useEffect(() => {
+    if (open) {
+      setFormData({
+        email: "",
+        password: "",
+      });
+      setErrors({});
+    }
+  }, [open]);
+
+  // Helper function to map API errors to form fields
+  const mapApiErrorsToFields = (apiErrors) => {
+    const fieldErrors = {};
+    apiErrors.forEach((error) => {
+      switch (error.code) {
+        case "InvalidEmail":
+          fieldErrors.email = error.description;
+          break;
+        case "InvalidPassword":
+          fieldErrors.password = error.description;
+          break;
+        default:
+          // For general errors, we'll show them in the toast
+          break;
+      }
+    });
+    return fieldErrors;
+  };
+
   const handleChange = (e) => {
     const { id, value } = e.target;
     setFormData((prev) => ({ ...prev, [id]: value }));
@@ -34,7 +63,7 @@ const LoginDialog = ({ open, onOpenChange, onSwitchToSignup }) => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = {};
 
@@ -49,16 +78,54 @@ const LoginDialog = ({ open, onOpenChange, onSwitchToSignup }) => {
     } else if (!validatePassword(formData.password)) {
       newErrors.password = "Password must be at least 6 characters long";
     }
+
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
 
     setIsLoading(true);
-    // Add your login logic here
-    setTimeout(() => {
+    setErrors({}); // Clear previous errors
+
+    try {
+      const response = await signIn(formData);
+
+      // Add success toast notification
+      toast.success("Login successful!", {
+        description: "Welcome back to ConnectMe!",
+        duration: 3000,
+      });
+
+      // Close the dialog
+      onOpenChange(false);
       setIsLoading(false);
-    }, 2000);
+      setFormData({ email: "", password: "" });
+      setErrors({});
+
+      // Here you might want to update the global auth state or redirect
+      // depending on your app's requirements
+    } catch (error) {
+      setIsLoading(false);
+      console.log("LoginDialog..", error);
+      // Handle specific API errors
+      if (!error.succeeded && error.errors) {
+        // Map API errors to form fields
+        const fieldErrors = mapApiErrorsToFields(error.errors);
+
+        // If we found field-specific errors, update the errors state
+        if (Object.keys(fieldErrors).length > 0) {
+          setErrors((prev) => ({ ...prev, ...fieldErrors }));
+        }
+
+        // Show error toast
+        toast.error(error.errors[0]?.description || "Login failed");
+      } else if (error.message) {
+        toast.error(error.message);
+      } else {
+        // Handle unexpected error format
+        toast.error("Login failed. Please try again.");
+      }
+    }
   };
 
   const handleSignupClick = () => {

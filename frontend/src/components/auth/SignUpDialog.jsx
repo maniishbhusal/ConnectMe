@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -28,6 +28,8 @@ import { format } from "date-fns";
 import { DialogDescription } from "@radix-ui/react-dialog";
 import { Root } from "@radix-ui/react-visually-hidden";
 import { validateEmail, validatePassword } from "../utils/authHelpers";
+import { signUp } from "../../api/auth";
+import { toast } from "sonner";
 
 // helper functions
 const validateUsername = (username) => {
@@ -51,6 +53,42 @@ const SignUpDialog = ({ open, onOpenChange, onSwitchToLogin }) => {
     password: "",
   });
   const [errors, setErrors] = useState({});
+
+  // Reset form data and errors whenever the dialog opens
+  useEffect(() => {
+    if (open) {
+      setStep(1);
+      setFormData({
+        email: "",
+        fullName: "",
+        gender: "",
+        dob: "",
+        username: "",
+        password: "",
+      });
+      setErrors({});
+    }
+  }, [open]);
+
+  // Helper function to map API errors to form fields
+  const mapApiErrorsToFields = (apiErrors) => {
+    const fieldErrors = {};
+
+    apiErrors.forEach((error) => {
+      switch (error.code) {
+        case "DuplicateUserName":
+          fieldErrors.username = error.description;
+          break;
+        case "DuplicateEmail":
+          fieldErrors.email = error.description;
+          break;
+        default:
+          break;
+      }
+    });
+
+    return fieldErrors;
+  };
 
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -129,17 +167,62 @@ const SignUpDialog = ({ open, onOpenChange, onSwitchToLogin }) => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateStep2()) {
       return;
     }
 
     setIsLoading(true);
-    // Add your signup logic here
-    setTimeout(() => {
+    // signup logic here
+    setErrors({}); // Clear previous errors
+
+    try {
+      const signUpData = {
+        email: formData.email,
+        username: formData.username,
+        password: formData.password,
+        fullName: formData.fullName,
+        gender: formData.gender,
+        dateOfBirth: formData.dob,
+      };
+      console.log("signUpData", signUpData);
+      const response = await signUp(signUpData);
+      console.log("error from SignUpDialog", response);
+
+      // Add success toast notification
+      toast.success("Account created successfully!", {
+        description: "You can now log in with your credentials.",
+        duration: 5000,
+      });
+
+      // Handle successful signup
       setIsLoading(false);
-    }, 2000);
+      onOpenChange(false); // Close the dialog
+      onSwitchToLogin(); // Switch to login dialog
+    } catch (error) {
+      setIsLoading(false);
+      // Handle specific API errors
+      if (!error.succeeded && error.errors) {
+        // Map API errors to form fields
+        const fieldErrors = mapApiErrorsToFields(error.errors);
+
+        // If we found field-specific errors, update the errors state
+        if (Object.keys(fieldErrors).length > 0) {
+          setErrors((prev) => ({ ...prev, ...fieldErrors }));
+          // If the error is related to email and we're on step 2,
+          // go back to step 1 to show the email error
+          if (fieldErrors.email && step === 2) {
+            setStep(1);
+          }
+        }
+        // Add error toast notification
+        toast.error(error.errors[0]?.description || "Registration failed");
+      } else {
+        // Handle unexpected error format
+        toast.error("Registration failed. Please try again.");
+      }
+    }
   };
 
   const handleLoginClick = () => {
