@@ -6,8 +6,8 @@ import SignUpDialog from "../auth/SignUpDialog";
 const RootLayout = () => {
   return (
     <>
-      {/* <HomePage />; */}
-      <Navbar/>
+      {/* <Navbar /> */}
+      <HomePage />
       {/* <SignUpDialog /> */}
     </>
   );

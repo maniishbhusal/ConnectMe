@@ -25,11 +25,12 @@ export const signUp = async (userData) => {
 export const signIn = async (credentials) => {
   try {
     const response = await axiosInstance.post("/signin", credentials);
-    console.log(response);
 
     // If the API returns a token, store it
     if (response.data.token) {
       localStorage.setItem("authToken", response.data.token);
+      // Dispatch custom event
+      window.dispatchEvent(new Event("authChange"));
     }
 
     return response.data;
@@ -40,7 +41,11 @@ export const signIn = async (credentials) => {
 
 // functions for token management
 export const getStoredToken = () => localStorage.getItem("authToken");
-export const removeStoredToken = () => localStorage.removeItem("authToken");
+export const removeStoredToken = () => {
+  localStorage.removeItem("authToken");
+  // Dispatch custom event
+  window.dispatchEvent(new Event("authChange"));
+};
 export const isAuthenticated = () => {
   const token = getStoredToken();
 
