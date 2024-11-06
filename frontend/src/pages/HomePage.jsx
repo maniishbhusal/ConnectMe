@@ -149,7 +149,7 @@ const HomePage = () => {
               <CardHeader>
                 <div className="flex items-center flex-wrap gap-2">
                   <Avatar className="h-6 w-6">
-                    <AvatarImage src="/api/placeholder/24/24" />
+                    <AvatarImage src="https://e7.pngegg.com/pngimages/799/987/png-clipart-computer-icons-avatar-icon-design-avatar-heroes-computer-wallpaper-thumbnail.png" />
                     <AvatarFallback>U</AvatarFallback>
                   </Avatar>
                   <div className="space-x-2 flex-wrap">

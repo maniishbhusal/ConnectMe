@@ -3,6 +3,7 @@ import { Home, Compass, BookMarked, Plus, Users, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
+import { Link } from "react-router-dom";
 
 const LeftSidebar = ({ isOpen, onClose }) => {
   const trendingCommunities = [
@@ -44,9 +45,11 @@ const LeftSidebar = ({ isOpen, onClose }) => {
           <div className="space-y-4 py-4">
             <div className="px-3 py-2">
               <div className="space-y-1">
-                <Button variant="secondary" className="w-full justify-start">
-                  <Home className="mr-2 h-4 w-4" />
-                  Home
+                <Button asChild variant="secondary" className="w-full justify-start">
+                  <Link to="/">
+                    <Home className="mr-2 h-4 w-4" />
+                    Home
+                  </Link>
                 </Button>
                 <Button variant="ghost" className="w-full justify-start">
                   <Compass className="mr-2 h-4 w-4" />

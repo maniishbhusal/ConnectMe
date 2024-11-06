@@ -4,6 +4,7 @@ import RootLayout from "./components/layout/RootLayout";
 import ErrorPage from "./components/common/ErrorPage";
 import { Toaster } from "sonner";
 import HomePage from "./pages/HomePage";
+import ProfilePage from "./pages/ProfilePage";
 
 // Router Configuration
 const router = createBrowserRouter([
@@ -11,7 +12,10 @@ const router = createBrowserRouter([
     path: "/",
     element: <RootLayout />,
     errorElement: <ErrorPage />,
-    children: [{ path: "/", element: <HomePage /> }],
+    children: [
+      { path: "/", element: <HomePage /> },
+      { path: "/:username", element: <ProfilePage /> },
+    ],
   },
 ]);
 
