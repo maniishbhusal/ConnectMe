@@ -1,14 +1,4 @@
-import React from "react";
-import { MessageSquare, BookMarked, TrendingUp } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { PostCard } from "../components/common/PostCard";
 
 const HomePage = () => {
   // Sample data for posts
@@ -22,7 +12,7 @@ const HomePage = () => {
       community: "webdev",
       upvotes: 324,
       comments: 45,
-      timeAgo: "2h",
+      timePosted: "2h",
     },
     {
       id: 2,
@@ -33,7 +23,7 @@ const HomePage = () => {
       community: "artificialintelligence",
       upvotes: 892,
       comments: 156,
-      timeAgo: "4h",
+      timePosted: "4h",
     },
     {
       id: 3,
@@ -44,7 +34,7 @@ const HomePage = () => {
       community: "javascript",
       upvotes: 410,
       comments: 78,
-      timeAgo: "1h",
+      timePosted: "1h",
     },
     {
       id: 4,
@@ -55,7 +45,7 @@ const HomePage = () => {
       community: "machinelearning",
       upvotes: 675,
       comments: 120,
-      timeAgo: "3h",
+      timePosted: "3h",
     },
     {
       id: 5,
@@ -66,7 +56,7 @@ const HomePage = () => {
       community: "datascience",
       upvotes: 530,
       comments: 90,
-      timeAgo: "5h",
+      timePosted: "5h",
     },
     {
       id: 6,
@@ -77,7 +67,7 @@ const HomePage = () => {
       community: "virtualreality",
       upvotes: 210,
       comments: 32,
-      timeAgo: "6h",
+      timePosted: "6h",
     },
     {
       id: 7,
@@ -88,7 +78,7 @@ const HomePage = () => {
       community: "webdev",
       upvotes: 385,
       comments: 67,
-      timeAgo: "1d",
+      timePosted: "1d",
     },
     {
       id: 8,
@@ -99,7 +89,7 @@ const HomePage = () => {
       community: "cybersecurity",
       upvotes: 420,
       comments: 55,
-      timeAgo: "2d",
+      timePosted: "2d",
     },
     {
       id: 9,
@@ -110,7 +100,7 @@ const HomePage = () => {
       community: "blockchain",
       upvotes: 310,
       comments: 49,
-      timeAgo: "3d",
+      timePosted: "3d",
     },
     {
       id: 10,
@@ -121,7 +111,7 @@ const HomePage = () => {
       community: "marketing",
       upvotes: 590,
       comments: 80,
-      timeAgo: "4d",
+      timePosted: "4d",
     },
     {
       id: 11,
@@ -132,7 +122,7 @@ const HomePage = () => {
       community: "business",
       upvotes: 450,
       comments: 37,
-      timeAgo: "5d",
+      timePosted: "5d",
     },
   ];
 
@@ -142,48 +132,7 @@ const HomePage = () => {
         {/* Posts Feed */}
         <div className="space-y-4">
           {posts.map((post) => (
-            <Card
-              key={post.id}
-              className="hover:border-primary/50 transition-colors"
-            >
-              <CardHeader>
-                <div className="flex items-center flex-wrap gap-2">
-                  <Avatar className="h-6 w-6">
-                    <AvatarImage src="https://e7.pngegg.com/pngimages/799/987/png-clipart-computer-icons-avatar-icon-design-avatar-heroes-computer-wallpaper-thumbnail.png" />
-                    <AvatarFallback>U</AvatarFallback>
-                  </Avatar>
-                  <div className="space-x-2 flex-wrap">
-                    <span className="text-sm font-medium">
-                      c/{post.community}
-                    </span>
-                    <span className="text-sm text-muted-foreground">
-                      • Posted by u/{post.author}
-                    </span>
-                    <span className="text-sm text-muted-foreground">
-                      {post.timeAgo} ago
-                    </span>
-                  </div>
-                </div>
-                <h3 className="text-xl font-semibold pt-2">{post.title}</h3>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">{post.content}</p>
-              </CardContent>
-              <CardFooter className="flex flex-wrap gap-2">
-                <Button variant="ghost" size="sm">
-                  <TrendingUp className="mr-2 h-4 w-4" />
-                  {post.upvotes}
-                </Button>
-                <Button variant="ghost" size="sm">
-                  <MessageSquare className="mr-2 h-4 w-4" />
-                  {post.comments} Comments
-                </Button>
-                <Button variant="ghost" size="sm">
-                  <BookMarked className="mr-2 h-4 w-4" />
-                  Save
-                </Button>
-              </CardFooter>
-            </Card>
+            <PostCard key={post.id} post={post} usUserProfile={false} />
           ))}
         </div>
       </div>

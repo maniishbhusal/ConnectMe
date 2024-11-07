@@ -48,12 +48,13 @@ const CreatePostDialog = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="hidden md:flex gap-2">
+        {/* Adjust button visibility to show on all screen sizes */}
+        <Button className="flex gap-2 w-full md:w-auto">
           <Plus className="h-4 w-4" />
           Create Post
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[700px]">
+      <DialogContent className="sm:max-w-[700px] max-w-[90vw]">
         <DialogHeader>
           <DialogTitle>Create a Post</DialogTitle>
           <DialogDescription>
@@ -66,39 +67,39 @@ const CreatePostDialog = () => {
           value={selectedType}
           onValueChange={setSelectedType}
         >
-          <TabsList className="grid grid-cols-5 gap-2">
+          <TabsList className="grid grid-cols-4 gap-2 mt-4">
             {PostTypes.map((type) => (
               <TabsTrigger
                 key={type.id}
                 value={type.id}
-                className="flex flex-col gap-2 h-20 data-[state=active]:bg-primary/10"
+                className="flex flex-col gap-1 items-center justify-center h-20 md:h-auto data-[state=active]:bg-primary/10"
               >
-                <type.icon className="h-5 w-5" />
-                <span className="text-xs">{type.title}</span>
+                <type.icon className="h-5 w-5 md:h-6 md:w-6" />
+                <span className="text-xs md:text-sm">{type.title}</span>
               </TabsTrigger>
             ))}
           </TabsList>
 
-          <div className="mt-20">
+          <div className="mt-8">
             <div className="flex items-center gap-2 mb-4">
               <Avatar className="h-8 w-8">
                 <AvatarImage src="/api/placeholder/32/32" />
                 <AvatarFallback>U</AvatarFallback>
               </Avatar>
-              <Input placeholder="Title" className="font-medium" />
+              <Input placeholder="Title" className="font-medium w-full" />
             </div>
 
             <TabsContent value="text">
               <Textarea
                 placeholder="What's on your mind?"
-                className="min-h-[200px]"
+                className="min-h-[200px] md:min-h-[300px]"
               />
             </TabsContent>
 
             <TabsContent value="image">
-              <div className="border-2 border-dashed rounded-lg p-8 text-center">
-                <Image className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
-                <p className="text-sm text-muted-foreground mb-2">
+              <div className="border-2 border-dashed rounded-lg p-6 md:p-8 text-center">
+                <Image className="h-6 md:h-8 w-6 md:w-8 mx-auto mb-2 text-muted-foreground" />
+                <p className="text-sm md:text-base text-muted-foreground mb-2">
                   Drag and drop images or click to upload
                 </p>
                 <Button variant="secondary">Choose File</Button>
@@ -109,14 +110,14 @@ const CreatePostDialog = () => {
               <Input placeholder="Paste your link here" />
               <Textarea
                 placeholder="Add a description (optional)"
-                className="mt-4 min-h-[100px]"
+                className="mt-4 min-h-[100px] md:min-h-[150px]"
               />
             </TabsContent>
 
             <TabsContent value="video">
-              <div className="border-2 border-dashed rounded-lg p-8 text-center">
-                <Video className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
-                <p className="text-sm text-muted-foreground mb-2">
+              <div className="border-2 border-dashed rounded-lg p-6 md:p-8 text-center">
+                <Video className="h-6 md:h-8 w-6 md:w-8 mx-auto mb-2 text-muted-foreground" />
+                <p className="text-sm md:text-base text-muted-foreground mb-2">
                   Upload a video or paste a video link
                 </p>
                 <Button variant="secondary">Choose File</Button>

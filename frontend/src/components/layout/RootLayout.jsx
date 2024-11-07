@@ -1,14 +1,17 @@
 import React, { useState } from "react";
 import Navbar from "../common/Navbar";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import LeftSidebar from "../common/LeftSidebar";
 import RightSidebar from "../common/RightSidebar";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 
 const RootLayout = () => {
   const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(false);
+  const location = useLocation();
+
+  // Check if the current path matches the /communities/:communityName pattern
+  const isCommunityPage = location.pathname.startsWith("/communities/");
 
   return (
     <div className="min-h-screen bg-background">
@@ -37,7 +40,8 @@ const RootLayout = () => {
         >
           <Outlet />
         </main>
-        <RightSidebar />
+        {/* Conditionally render RightSidebar only if not on a community page */}
+        {!isCommunityPage && <RightSidebar />}
       </div>
     </div>
   );

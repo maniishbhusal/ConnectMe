@@ -11,12 +11,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ProfileAvatar } from "../components/userprofile/ProfileAvatar";
 import { StatButton } from "../components/userprofile/StatButton";
 import { ProfileEditForm } from "../components/userprofile/ProfileEditForm";
-import { PostCard } from "../components/userprofile/PostCard";
+import { PostCard } from "../components/common/PostCard";
 import { MapPin, Link as LinkIcon, Calendar } from "lucide-react";
 import { DialogDescription } from "@radix-ui/react-dialog";
 
 export default function ProfilePage() {
-  
   const stats = [
     { label: "Posts", value: "2,345" },
     { label: "Followers", value: "12.5k" },
@@ -27,14 +26,14 @@ export default function ProfilePage() {
     {
       id: 1,
       content: "Just launched my new project! #coding #webdev",
-      likes: 234,
+      upvotes: 234,
       comments: 45,
       //   image: "https://play-lh.googleusercontent.com/MzBo2YvXgIxn-PS01V7e-go2MlDsPMOhcze_CcqgTP94b3jmo72ATgl_dwFM1ovv5A",
     },
     {
       id: 2,
       content: "Beautiful sunset at the beach 🌅",
-      likes: 567,
+      upvotes: 567,
       comments: 89,
       image:
         "https://media.sproutsocial.com/uploads/2022/05/How-to-post-on-instagram-from-pc.svg",
@@ -42,7 +41,7 @@ export default function ProfilePage() {
     {
       id: 3,
       content: "Learning new technologies is always exciting!",
-      likes: 123,
+      upvotes: 123,
       comments: 34,
       image:
         "https://cdn.leonardo.ai/users/53102a56-7784-4f0b-be72-463f484795c2/generations/01aede48-c285-4192-9d69-2a70dcb37b91/variations/alchemyrefiner_alchemymagic_0_01aede48-c285-4192-9d69-2a70dcb37b91_0.jpg?w=512",
@@ -124,7 +123,7 @@ export default function ProfilePage() {
           <TabsContent value="posts" className="mt-6">
             <div className="grid gap-6">
               {posts.map((post) => (
-                <PostCard key={post.id} post={post} />
+                <PostCard key={post.id} post={post} isUserProfile={true} />
               ))}
             </div>
           </TabsContent>

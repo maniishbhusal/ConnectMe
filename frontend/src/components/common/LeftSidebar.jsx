@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
+import CreateCommunityDialog from "../community/CreateCommunityDialog";
 
 const LeftSidebar = ({ isOpen, onClose }) => {
   const trendingCommunities = [
@@ -45,7 +46,11 @@ const LeftSidebar = ({ isOpen, onClose }) => {
           <div className="space-y-4 py-4">
             <div className="px-3 py-2">
               <div className="space-y-1">
-                <Button asChild variant="secondary" className="w-full justify-start">
+                <Button
+                  asChild
+                  variant="secondary"
+                  className="w-full justify-start"
+                >
                   <Link to="/">
                     <Home className="mr-2 h-4 w-4" />
                     Home
@@ -65,10 +70,8 @@ const LeftSidebar = ({ isOpen, onClose }) => {
               <h2 className="mb-2 px-4 text-lg font-semibold">
                 Your Communities
               </h2>
-              <Button variant="outline" className="w-full justify-start">
-                <Plus className="mr-2 h-4 w-4" />
-                Create Community
-              </Button>
+           
+              <CreateCommunityDialog />
               <div className="space-y-1 mt-4">
                 {trendingCommunities.map((community) => (
                   <Button

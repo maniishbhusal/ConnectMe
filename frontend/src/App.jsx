@@ -5,6 +5,7 @@ import ErrorPage from "./components/common/ErrorPage";
 import { Toaster } from "sonner";
 import HomePage from "./pages/HomePage";
 import ProfilePage from "./pages/ProfilePage";
+import CommunityPage from "./pages/CommunityPage";
 
 // Router Configuration
 const router = createBrowserRouter([
@@ -15,6 +16,7 @@ const router = createBrowserRouter([
     children: [
       { path: "/", element: <HomePage /> },
       { path: "/:username", element: <ProfilePage /> },
+      { path: "/communities/:communityName", element: <CommunityPage /> },
     ],
   },
 ]);
