@@ -1,0 +1,150 @@
+﻿@model IEnumerable<Post>
+
+<div class="container mt-4">
+    <!-- Post Creation Form -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form asp-action="Create" enctype="multipart/form-data" method="post">
+                <div class="mb-3">
+                    <input name="Title" class="form-control" placeholder="What's on your mind?" required />
+                </div>
+                <div class="mb-3">
+                    <textarea name="Description" class="form-control" rows="3"
+                              placeholder="Write your post..." required></textarea>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <input type="file" name="image" class="form-control-file" accept="image/*" />
+                    <button type="submit" class="btn btn-primary">Post</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Posts Feed -->
+    @foreach (var post in Model)
+    {
+        <div class="card mb-3" id="post-@post.PostId">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <h5 class="card-title" id="title-@post.PostId">@post.Title</h5>
+                    <small class="text-muted">
+                        @post.CreatedAt.ToString("MMM dd, yyyy HH:mm")
+                    </small>
+                </div>
+                <p class="card-text" id="description-@post.PostId">@post.Description</p>
+                @if (!string.IsNullOrEmpty(post.ImagePath))
+                {
+                    <img src="@post.ImagePath" class="img-fluid mb-3" id="image-@post.PostId" alt="Post image" />
+                }
+                <div class="d-flex justify-content-end">
+                    <button class="btn btn-primary btn-sm me-2"
+                            onclick="editPost(@post.PostId)">
+                        Edit
+                    </button>
+                    <button class="btn btn-danger btn-sm"
+                            onclick="deletePost(@post.PostId)">
+                        Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Edit Modal -->
+<div class="modal fade" id="editModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Post</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editForm" enctype="multipart/form-data">
+                    <input type="hidden" id="editPostId" />
+                    <div class="mb-3">
+                        <input id="editTitle" name="Title" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <textarea id="editDescription" name="Description"
+                                  class="form-control" rows="3" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <input type="file" id="editImage" name="image"
+                               class="form-control-file" accept="image/*" />
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+                    Close
+                </button>
+                <button type="button" class="btn btn-primary"
+                        onclick="updatePost()">
+                    Save changes
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function editPost(postId) {
+            $.get('/Posts/Edit/' + postId)
+                .done(function(response) {
+                    if (response.success) {
+                        $('#editPostId').val(postId);
+                        $('#editTitle').val(response.post.title);
+                        $('#editDescription').val(response.post.description);
+                        $('#editModal').modal('show');
+                    }
+                });
+        }
+
+        function updatePost() {
+            var postId = $('#editPostId').val();
+            var formData = new FormData($('#editForm')[0]);
+
+            $.ajax({
+                url: '/Posts/Edit/' + postId,
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: {
+                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                },
+                success: function(response) {
+                    if (response.success) {
+                        location.reload();
+                    } else {
+                        alert(response.message || 'Error updating post');
+                    }
+                },
+                error: function() {
+                    alert('Error updating post');
+                }
+            });
+        }
+
+        function deletePost(postId) {
+            if (confirm('Are you sure you want to delete this post?')) {
+                $.post('/Posts/Delete/' + postId, {
+                    '__RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                })
+                .done(function(response) {
+                    if (response.success) {
+                        location.reload();
+                    } else {
+                        alert('Error deleting post');
+                    }
+                })
+                .fail(function() {
+                    alert('Error deleting post');
+                });
+            }
+        }
+    </script>
+}

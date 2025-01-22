@@ -9,5 +9,7 @@ namespace backend.Context
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
         }
+
+        public DbSet<Community> Communities { get; set; }
     }
 }
