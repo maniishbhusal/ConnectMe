@@ -65,3 +65,37 @@ document.getElementById('closePostForm').addEventListener('click', () => {
     const form = document.getElementById('postCreationForm');
     form.classList.add('d-none'); // Hide form
 });
+
+// Mobile Sidebar Toggle
+document.addEventListener('DOMContentLoaded', function () {
+    const toggleButton = document.getElementById('toggleLeftSidebar');
+    const leftSidebar = document.querySelector('.left-sidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+    toggleButton.addEventListener('click', function () {
+        leftSidebar.classList.toggle('show');
+        sidebarOverlay.classList.toggle('show');
+    });
+
+    sidebarOverlay.addEventListener('click', function () {
+        leftSidebar.classList.remove('show');
+        sidebarOverlay.classList.remove('show');
+    });
+});
+
+// Ensure mobile-friendly interactions
+document.addEventListener('DOMContentLoaded', function () {
+    // Adjust post creation form for mobile
+    const postForm = document.getElementById('postCreationForm');
+    const postActions = postForm?.querySelector('.post-actions');
+
+    if (postActions) {
+        postActions.classList.add('d-flex', 'flex-column', 'flex-md-row');
+    }
+
+    // Make post interactions more mobile-friendly
+    const postInteractions = document.querySelectorAll('.post-interactions');
+    postInteractions.forEach(interactions => {
+        interactions.classList.add('d-flex', 'flex-column', 'flex-md-row');
+    });
+});

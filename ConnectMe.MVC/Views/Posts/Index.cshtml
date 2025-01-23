@@ -34,8 +34,8 @@
             <div class="user-profile">
                 <img src="~/images/profile.png" alt="Profile" class="profile-avatar" />
                 <div class="user-details">
-                    <h6>John Doe</h6>
-                    <p>johndoe.com</p>
+                    <h6>Benjamin Graham</h6>
+                    <p>@@Benjamin</p>
                 </div>
             </div>
         </div>
@@ -44,6 +44,10 @@
     <!-- Main Content -->
     <div class="main-content">
         <div class="content-header">
+            <button class="btn btn-mobile-menu d-md-none" id="toggleLeftSidebar">
+                <i class="fas fa-bars"></i>
+            </button>
+
             <h2>Feed</h2>
             <button class="btn btn-create-post" onclick="togglePostForm()">
                 <i class="fas fa-plus"></i> Create Post
@@ -117,13 +121,13 @@
                     </div>
                     <div class="post-interactions">
                         <button class="btn-interaction">
-                            <i class="fas fa-thumbs-up"></i> Like
+                            <i class="fas fa-thumbs-up"></i> <span>Like</span>
                         </button>
                         <button class="btn-interaction">
-                            <i class="fas fa-comment"></i> Comment
+                            <i class="fas fa-comment"></i> <span>Comment</span>
                         </button>
                         <button class="btn-interaction">
-                            <i class="fas fa-share"></i> Share
+                            <i class="fas fa-share"></i> <span>Share</span>
                         </button>
                     </div>
                 </div>
@@ -211,4 +215,4 @@
         </div>
     </div>
 </div>
-
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
