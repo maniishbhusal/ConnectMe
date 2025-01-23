@@ -1,95 +1,179 @@
 ﻿@model IEnumerable<Post>
 
 @{
-    ViewData["Title"] = "Post";
+    ViewData["Title"] = "ConnectMe";
 }
 
-<div class="container py-5">
-    <!-- Post Creation Form -->
-    <div id="postCreationForm" class="card create-post-card shadow-lg border-0 w-50 d-none">
-        <div class="card-body p-4">
-            <button class="btn-close float-end" id="closePostForm"></button>
-            <h5 class="card-title text-center mb-4">Create a New Post</h5>
-            <form asp-action="Create" enctype="multipart/form-data" method="post">
-                <div class="mb-4">
-                    <input name="Title"
-                           class="form-control form-control-lg border-0 shadow-sm rounded-pill"
-                           placeholder="What's on your mind?"
-                           required />
+<div class="social-media-layout">
+    <!-- Left Sidebar -->
+    <div class="left-sidebar">
+        <div class="sidebar-logo">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTt6VFb4SSmM8FsJvbjG96_0hzNAlrs7R1-cw&s" alt="ConnectMe Logo" />
+        </div>
+        <nav class="sidebar-menu">
+            <ul>
+                <li class="active">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </li>
+                <li>
+                    <i class="fas fa-user-friends"></i>
+                    <span>Friends</span>
+                </li>
+                <li>
+                    <i class="fas fa-bell"></i>
+                    <span>Notifications</span>
+                </li>
+                <li>
+                    <i class="fas fa-envelope"></i>
+                    <span>Messages</span>
+                </li>
+            </ul>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="user-profile">
+                <img src="~/images/profile.png" alt="Profile" class="profile-avatar" />
+                <div class="user-details">
+                    <h6>John Doe</h6>
+                    <p>johndoe.com</p>
                 </div>
-                <div class="mb-4">
-                    <textarea name="Description"
-                              class="form-control border-0 shadow-sm rounded"
-                              rows="4"
-                              placeholder="Write your post..."
-                              required></textarea>
-                </div>
-                <div class="d-flex justify-content-between align-items-center">
-                    <div class="file-upload position-relative">
-                        <label for="imageUpload" class="btn btn-light shadow-sm rounded-pill">
-                            <i class="fas fa-image me-2"></i>Add Photo
-                        </label>
-                        <input type="file"
-                               id="imageUpload"
-                               name="image"
-                               accept="image/*"
-                               class="form-control d-none" />
-                    </div>
-                    <button type="submit" class="btn btn-primary rounded-pill px-4 shadow-sm">
-                        <i class="fas fa-paper-plane me-2"></i>Post
-                    </button>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
 
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="content-header">
+            <h2>Feed</h2>
+            <button class="btn btn-create-post" onclick="togglePostForm()">
+                <i class="fas fa-plus"></i> Create Post
+            </button>
+        </div>
 
-
-    <!-- Posts Feed -->
-    @foreach (var post in Model)
-    {
-        <div class="card-post card post-card mb-4 w-75" id="post-@post.PostId">
+        <!-- Post Creation Form -->
+        <div id="postCreationForm" class="card post-creation-card shadow-lg d-none">
             <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <div class="d-flex align-items-center">
-                        <div class="rounded-circle bg-primary text-white p-2 me-2">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <div>
-                            <h5 class="card-title mb-0" id="title-@post.PostId">@post.Title</h5>
-                            <small class="text-muted">
-                                <i class="far fa-clock me-1"></i>
-                                @post.CreatedAt.ToString("MMM dd, yyyy HH:mm")
-                            </small>
-                        </div>
-                    </div>
-                    <div class="dropdown">
-                        <button class="btn btn-light btn-sm" type="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-ellipsis-v"></i>
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li>
-                                <a class="dropdown-item" href="#" onclick="editPost(@post.PostId)">
-                                    <i class="fas fa-edit me-2"></i>Edit
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item text-danger" href="#" onclick="deletePost(@post.PostId)">
-                                    <i class="fas fa-trash me-2"></i>Delete
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
+                <div class="post-form-header">
+                    <h4>Create a New Post</h4>
+                    <button id="closePostForm" class="btn-close-form">
+                        <i class="fas fa-times"></i>
+                    </button>
                 </div>
-                <p class="card-text" id="description-@post.PostId">@post.Description</p>
-                @if (!string.IsNullOrEmpty(post.ImagePath))
-                {
-                    <img src="@post.ImagePath" class="img-fluid post-image w-100 mb-3"
-                         id="image-@post.PostId" alt="Post image" />
-                }
+                <form asp-action="Create" enctype="multipart/form-data" method="post">
+                    <input name="Title" class="form-control post-title" placeholder="What's on your mind?" required />
+                    <textarea name="Description" class="form-control post-description" rows="4" placeholder="Write your post..." required></textarea>
+                    <div class="post-actions">
+                        <label for="imageUpload" class="btn btn-upload-image">
+                            <i class="fas fa-image"></i> Add Photo
+                        </label>
+                        <input type="file" id="imageUpload" name="image" accept="image/*" class="d-none" />
+                        <button type="submit" class="btn btn-primary btn-post">
+                            <i class="fas fa-paper-plane"></i> Post
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
-    }
+
+        <!-- Posts Feed -->
+        <div class="posts-feed">
+            @foreach (var post in Model)
+            {
+                <div class="card post-card" id="post-@post.PostId">
+                    <div class="post-header">
+                        <div class="user-info">
+                            <img src="~/images/profile.png" alt="User Avatar" class="user-avatar" />
+                            <div>
+                                <h5>@post.Title</h5>
+                                <small>@post.CreatedAt.ToString("MMM dd, yyyy HH:mm")</small>
+                            </div>
+                        </div>
+                        <div class="post-actions-dropdown">
+                            <button class="btn-post-options" data-bs-toggle="dropdown">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" href="#" onclick="editPost(@post.PostId)">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item text-danger" href="#" onclick="deletePost(@post.PostId)">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="post-content">
+                        <p>@post.Description</p>
+                        @if (!string.IsNullOrEmpty(post.ImagePath))
+                        {
+                            <div class="post-image-container">
+                                <img src="@post.ImagePath" alt="Post image" />
+                            </div>
+                        }
+                    </div>
+                    <div class="post-interactions">
+                        <button class="btn-interaction">
+                            <i class="fas fa-thumbs-up"></i> Like
+                        </button>
+                        <button class="btn-interaction">
+                            <i class="fas fa-comment"></i> Comment
+                        </button>
+                        <button class="btn-interaction">
+                            <i class="fas fa-share"></i> Share
+                        </button>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Right Sidebar -->
+    <div class="right-sidebar">
+        <div class="trending-section">
+            <h4>Trending</h4>
+            <ul class="trending-list">
+                <li>#TechInnovation</li>
+                <li>#ArtificialIntelligence</li>
+                <li>#SustainableTech</li>
+                <li>#GlobalConnectivity</li>
+            </ul>
+        </div>
+        <div class="suggestions-section">
+            <h4>People You May Know</h4>
+            <div class="suggestion-card">
+                <img src="https://static.vecteezy.com/system/resources/thumbnails/002/002/332/small/ablack-man-avatar-character-isolated-icon-free-vector.jpg" alt="Suggested Friend" />
+                <div>
+                    <h6>Emily Chen</h6>
+                    <button class="btn btn-follow">Follow</button>
+                </div>
+            </div>
+            <div class="suggestion-card">
+                <img src="https://static.vecteezy.com/system/resources/thumbnails/002/002/332/small/ablack-man-avatar-character-isolated-icon-free-vector.jpg" alt="Suggested Friend" />
+                <div>
+                    <h6>Alex Rodriguez</h6>
+                    <button class="btn btn-follow">Follow</button>
+                </div>
+            </div>
+            <div class="suggestion-card">
+                <img src="https://static.vecteezy.com/system/resources/thumbnails/002/002/332/small/ablack-man-avatar-character-isolated-icon-free-vector.jpg" alt="Suggested Friend" />
+                <div>
+                    <h6>Maria Gonzalez</h6>
+                    <button class="btn btn-follow">Follow</button>
+                </div>
+            </div>
+            <div class="suggestion-card">
+                <img src="https://static.vecteezy.com/system/resources/thumbnails/002/002/332/small/ablack-man-avatar-character-isolated-icon-free-vector.jpg" alt="Suggested Friend" />
+                <div>
+                    <h6>John Smith</h6>
+                    <button class="btn btn-follow">Follow</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Edit Modal -->
