@@ -1,7 +1,7 @@
 ﻿using ConnectMe.MVC.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace backend.Context
+namespace ConnectMe.MVC.Context
 {
     public class ApplicationDbContext : DbContext
     {
@@ -10,5 +10,6 @@ namespace backend.Context
         }
 
         public DbSet<Post> Posts { get; set; }
+        public DbSet<User> Users { get; set; }
     }
 }

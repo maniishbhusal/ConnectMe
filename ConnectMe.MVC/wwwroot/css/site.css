@@ -68,7 +68,7 @@ body, html {
     .btn-explore:hover {
         transform: scale(1.05);
         box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        color: #000000;
+        color: #fff;
     }
 
 .feature-icon {
@@ -486,5 +486,53 @@ body, html {
 @media (min-width: 992px) {
     .btn-mobile-menu {
         display: none;
+    }
+}
+
+/* Auth pages styling */
+.card {
+    border-radius: 10px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    }
+
+.card-header.bg-primary {
+    background: linear-gradient(135deg, #4e73df 0%, #224abe 100%) !important;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+    border: none;
+    transition: all 0.3s ease;
+}
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(78, 115, 223, 0.4);
+    }
+
+.form-floating > .form-control:focus ~ label,
+.form-floating > .form-control:not(:placeholder-shown) ~ label {
+    color: #4e73df;
+}
+
+.form-control:focus {
+    border-color: #bac8f3;
+    box-shadow: 0 0 0 0.25rem rgba(78, 115, 223, 0.25);
+}
+
+.form-check-input:checked {
+    background-color: #4e73df;
+    border-color: #4e73df;
+}
+
+@media (max-width: 576px) {
+    .card-body {
+        padding: 1.5rem;
     }
 }

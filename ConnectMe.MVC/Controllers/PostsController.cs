@@ -1,10 +1,12 @@
-﻿using backend.Context;
+﻿using ConnectMe.MVC.Context;
 using ConnectMe.MVC.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace ConnectMe.MVC.Controllers
 {
+    [Authorize]
     public class PostsController : Controller
     {
         private readonly ApplicationDbContext _context;

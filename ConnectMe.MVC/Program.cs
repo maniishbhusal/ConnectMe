@@ -1,4 +1,5 @@
-using backend.Context;
+using ConnectMe.MVC.Context;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
 namespace ConnectMe.MVC
@@ -17,6 +18,20 @@ namespace ConnectMe.MVC
                 options => options.UseSqlServer(builder.Configuration.GetConnectionString("SQLAuthConnection"))
             );
 
+            // Add authentication services
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.LoginPath = "/Auth/SignIn";
+                    options.LogoutPath = "/Auth/SignOut";
+                    options.AccessDeniedPath = "/Auth/AccessDenied";
+                    options.Cookie.HttpOnly = true;
+                    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                    options.Cookie.SameSite = SameSiteMode.Strict;
+                    options.ExpireTimeSpan = TimeSpan.FromDays(30);
+                    options.SlidingExpiration = true;
+                });
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -30,6 +45,7 @@ namespace ConnectMe.MVC
             app.UseHttpsRedirection();
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapStaticAssets();
